@@ -62,7 +62,7 @@ namespace API.Extensions
                     policy
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowCredentials()
+                        .AllowCredentials() //resolves problem with connecting to SignalR hub, by allowing token to be send to Hub
                         .WithOrigins("http://localhost:3000");
                 });
             });

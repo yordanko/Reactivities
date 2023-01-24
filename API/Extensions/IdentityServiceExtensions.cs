@@ -33,10 +33,13 @@ namespace API.Extensions
                         ValidateIssuer = false,
                         ValidateAudience = false
                     };
+
+                    //SingnalR registration: Add access token to SingleR context
                     opt.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
                         {
+                            //access_token will be passed from clien
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
