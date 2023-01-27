@@ -13,6 +13,7 @@ const sleep = (delay: number) => {
     })
 }
 
+//REACT_APP_API_URL is an environment variable. It can be read authomaticaly depending on environment 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
@@ -24,13 +25,14 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(async response => {
-    if (process.env.NODE_ENV === 'development') await sleep(1000);
-    const pagination = response.headers['pagination'];
-    if (pagination) {
-        response.data = new PaginatedResult(response.data, JSON.parse(pagination));
-        return response as AxiosResponse<PaginatedResult<any>>
-    }
-    return response;
+  //Use process.env.NODE_ENV to find out environment.
+  if (process.env.NODE_ENV === "development") await sleep(1000);
+  const pagination = response.headers["pagination"];
+  if (pagination) {
+    response.data = new PaginatedResult(response.data, JSON.parse(pagination));
+    return response as AxiosResponse<PaginatedResult<any>>;
+  }
+  return response;
 }, (error: AxiosError) => {
     const { data, status, config } = error.response as AxiosResponse;
     switch (status) {
