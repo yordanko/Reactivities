@@ -71,7 +71,7 @@ namespace API.Extensions
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials() //resolves problem with connecting to SignalR hub, by allowing token to be send to Hub
-                        .WithOrigins("http://localhost:3000");
+                        .WithOrigins("http://localhost:3000", "https://localhost:3000");
                 });
             });
             services.AddMediatR(typeof(List.Handler));
