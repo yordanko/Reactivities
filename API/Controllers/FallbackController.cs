@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    //a fallback controller. It will redirect to client app in wwwroot folder
     [AllowAnonymous]
     public class FallbackController : Controller
     {
