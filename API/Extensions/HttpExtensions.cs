@@ -16,8 +16,8 @@ namespace API.Extensions
             };
             response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationHeader));
 
-            //Expose custom header values to java script! 
-            response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+            //ApplicationServicesExtensions CORS policy .WithExposedHeaders("WWW-Authenticate", "Pagination") overrides next line and there is no need
+            //response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }
     }
 }

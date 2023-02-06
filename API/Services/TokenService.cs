@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Domain;
 using Microsoft.IdentityModel.Tokens;
@@ -28,7 +29,8 @@ namespace API.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddDays(7),
+                //NOTE: JWT expiry day/time is set here. 
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = creds
             };
 
@@ -38,5 +40,15 @@ namespace API.Services
 
             return tokenHandler.WriteToken(token);
         }   
+
+        public RefreshToken CreateRefreshToken(AppUser user)
+        {
+            var randomNumber = new byte[32];
+
+            //Note: random number generation
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return new RefreshToken {Token = Convert.ToBase64String(randomNumber)};
+        }
     }
 }

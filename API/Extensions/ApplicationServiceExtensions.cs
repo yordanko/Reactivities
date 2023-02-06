@@ -3,6 +3,7 @@ using Application.Core;
 using Application.Interfaces;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Infrastructure.Email;
 using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
@@ -71,6 +72,8 @@ namespace API.Extensions
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials() //resolves problem with connecting to SignalR hub, by allowing token to be send to Hub
+                        //Add this to expose headers used in refresh token and pagination. Overrides HttpExtensions.cs response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
+                        .WithExposedHeaders("WWW-Authenticate", "Pagination")
                         .WithOrigins("http://localhost:3000", "https://localhost:3000");
                 });
             });
@@ -83,6 +86,7 @@ namespace API.Extensions
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
             services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
             services.AddSignalR();
+            services.AddScoped<IEmailSender, EmailSender>();
 
             return services;
         }
