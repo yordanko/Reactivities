@@ -13,3 +13,5 @@ You can see how this app was made by checking out the Udemy course for this here
 If you are looking for the repository for the version of this app created on .Net 6.0 and Angular v12 then this is available here:
 
 https://github.com/TryCatchLearn/Reactivities-v6
+
+See secrets to be used.docxto use proper config.
