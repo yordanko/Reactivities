@@ -6,9 +6,19 @@ import { useStore } from '../../app/stores/store';
 import LoginForm from '../users/LoginForm';
 import RegsiterForm from '../users/RegsiterForm';
 import FacebookLogin from '@greatsumini/react-facebook-login';
+import { useSelector } from 'react-redux';
+import { ReduxRootState, useAppDispatch } from '../../app/store-redux/store';
+import { IsUserLoggedIn, UserReduxStoreType } from '../../app/store-redux/userSlice';
+import { modalSlice } from '../../app/store-redux/modalSlice';
 
 export default observer(function HomePage() {
-    const { userStore, modalStore } = useStore();
+    const userName  = useSelector(
+      (state: ReduxRootState) => state.userReducer.user?.displayName
+    );
+    const dispatch = useAppDispatch();
+    const logedIn = IsUserLoggedIn();
+
+    //const modal = useSelector((state:ReduxRootState) => state.modalReducer)
     return (
       <Segment inverted textAlign="center" vertical className="masthead">
         <Container text>
@@ -21,13 +31,9 @@ export default observer(function HomePage() {
             />
             Reactivities
           </Header>
-          {userStore.isLoggedIn ? (
+          {logedIn ? (
             <>
-              <Header
-                as="h2"
-                inverted
-                content={`Welcome back ${userStore.user?.displayName}`}
-              />
+              <Header as="h2" inverted content={`Welcome back ${userName}`} />
               <Button as={Link} to="/activities" size="huge" inverted>
                 Go to activities!
               </Button>
@@ -35,14 +41,18 @@ export default observer(function HomePage() {
           ) : (
             <>
               <Button
-                onClick={() => modalStore.openModal(<LoginForm />)}
+                onClick={() =>
+                  dispatch(modalSlice.actions.openModal("LoginForm"))
+                }
                 size="huge"
                 inverted
               >
                 Login!
               </Button>
               <Button
-                onClick={() => modalStore.openModal(<RegsiterForm />)}
+                onClick={() =>
+                  dispatch(modalSlice.actions.openModal("RegsiterForm"))
+                }
                 size="huge"
                 inverted
               >
@@ -58,12 +68,11 @@ export default observer(function HomePage() {
                 inverted
                 color="facebook"
                 content="Login with Facebook"
-                loading = {userStore.fbLogin}
+                //loading={userStore.fbLogin}
                 onSuccess={(response: any) => {
                   console.log("Login succes", response);
-                  userStore.facebookLogin(response.accessToken)
+                  //user.facebookLogin(response.accessToken);
                 }}
-
                 onFail={(response: any) => {
                   console.log("Login failed", response);
                 }}

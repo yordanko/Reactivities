@@ -1,11 +1,18 @@
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 import { Activity, ActivityFormValues } from '../models/activity';
-import { PaginatedResult } from '../models/pagination';
+import { PageResult, PaginatedResult } from '../models/pagination';
 import { Photo, Profile, UserActivity } from '../models/profile';
 import { User, UserFormValues } from '../models/user';
 import { router } from '../router/Routes';
-import { store } from '../stores/store';
+import { ReduxRootState } from '../store-redux/store';
+
+let store:ReduxRootState;
+
+export const injectStore = (_store: ReduxRootState) => {
+  store = _store;
+};
+
 
 const sleep = (delay: number) => {
     return new Promise((resolve) => {
@@ -19,7 +26,7 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 const responseBody = <T>(response: AxiosResponse<T>) => response.data;
 
 axios.interceptors.request.use(config => {
-    const token = store.commonStore.token;
+    const token = store.getState().commonReducer.token;
     if (token && config.headers) config.headers.Authorization = `Bearer ${token}`;
     return config;
 })
@@ -77,14 +84,22 @@ const requests = {
 }
 
 const Activities = {
-    list: (params: URLSearchParams) => axios.get<PaginatedResult<Activity[]>>('/activities', { params })
-        .then(responseBody),
-    details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-    create: (activity: ActivityFormValues) => requests.post<void>(`/activities`, activity),
-    update: (activity: ActivityFormValues) => requests.put<void>(`/activities/${activity.id}`, activity),
-    delete: (id: string) => requests.del<void>(`/activities/${id}`),
-    attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {})
-}
+  list: (params: URLSearchParams) =>
+    axios
+      .get<PaginatedResult<Activity[]>>("/activities", { params })
+      .then(responseBody),
+  listPage: (params: URLSearchParams) =>
+    axios
+      .get<PageResult<Activity[]>>("/activities", { params })
+      .then(responseBody),
+  details: (id: string) => requests.get<Activity>(`/activities/${id}`),
+  create: (activity: ActivityFormValues) =>
+    requests.post<void>(`/activities`, activity),
+  update: (activity: ActivityFormValues) =>
+    requests.put<void>(`/activities/${activity.id}`, activity),
+  delete: (id: string) => requests.del<void>(`/activities/${id}`),
+  attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {}),
+};
 
 const Account = {
     current: () => requests.get<User>('account'),

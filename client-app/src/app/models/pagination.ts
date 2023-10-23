@@ -24,3 +24,13 @@ export class PagingParams {
         this.pageSize = pageSize;
     }
 }
+
+export interface PageParams {
+  pageNumber:number;
+  pageSize:number;  
+}
+
+export interface PageResult<T> {
+  data: T;
+  pagination: Pagination;
+}

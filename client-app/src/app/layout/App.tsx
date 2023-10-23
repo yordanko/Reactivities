@@ -4,24 +4,33 @@ import { observer } from 'mobx-react-lite';
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 import HomePage from '../../features/home/HomePage';
 import { ToastContainer } from 'react-toastify';
-import { useStore } from '../stores/store';
 import { useEffect } from 'react';
 import LoadingComponent from './LoadingComponent';
 import ModalContainer from '../common/modals/ModalContainer';
+import { useSelector } from 'react-redux';
+import { ReduxDispatch, ReduxRootState, useAppDispatch } from '../store-redux/store';
+import { commonSlice } from '../store-redux/commonSlice';
+import { getUser, userSlice } from '../store-redux/userSlice';
 
 function App() {
   const location = useLocation();
-  const { commonStore, userStore } = useStore();
+  const userState = useSelector((state:ReduxRootState) => state.userReducer);
+  const commonState = useSelector((state:ReduxRootState) => state.commonReducer);
+  const dispatch: ReduxDispatch = useAppDispatch();
+
 
   useEffect(() => {
-    if (commonStore.token) {
-      userStore.getUser().finally(() => commonStore.setAppLoaded())
+    if (commonState.token) {
+      //NOTE: dispatch passes getUser(), not userSlice.actions.getUser()
+      //because createAsyncThunk is used for getUser
+      dispatch(getUser()).finally(() => dispatch(commonSlice.actions.setAppLoaded()));
     } else {
-      commonStore.setAppLoaded()
+      dispatch( commonSlice.actions.setAppLoaded());
     }
-  }, [commonStore, userStore])
+  }, [commonState]);
 
-  if (!commonStore.appLoaded) return <LoadingComponent content='Loading app...' />
+  if (!commonState.appLoaded)
+    return <LoadingComponent content="Loading app..." />;
 
   return (
     <>
