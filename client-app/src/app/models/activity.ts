@@ -1,4 +1,5 @@
 import { Profile } from "./profile";
+import { User } from "./user";
 
 export interface Activity {
     id: string;
@@ -44,4 +45,9 @@ export class ActivityFormValues
     constructor(init?: ActivityFormValues) {
       Object.assign(this, init);
     }
+  }
+
+  export interface UserActivity{
+    activity: Activity;
+    user: User;
   }

@@ -1,7 +1,7 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Activity } from "../models/activity";
+import { PayloadAction,  createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { Activity, UserActivity } from "../models/activity";
 import { PageParams, PageResult, Pagination } from "../models/pagination";
-import store, { ReduxDispatch, ReduxRootState, reduxStore } from "./store";
+import { ReduxRootState } from "./store";
 import agent from "../api/agent";
 import { User } from "../models/user";
 
@@ -49,11 +49,14 @@ export const activitySlice = createSlice({
   name: "activities",
   initialState: initialActivityReduxSore,
   reducers: {
-    setPageParams: (state, action: PayloadAction<PageParams>) => {
-      state.pageParams = action.payload
+    setPageParams: (
+      state: ActivityReduxSoreType,
+      action: PayloadAction<PageParams>
+    ) => {
+      state.pageParams = action.payload;
     },
     setPredicate: (
-      state,
+      state: ActivityReduxSoreType,
       action: PayloadAction<{ predicated: string; value: boolean | Date }>
     ) => {
       const resetPredicate = () => {
@@ -82,26 +85,53 @@ export const activitySlice = createSlice({
           break;
       }
     },
-    setActivity(state: ActivityReduxSoreType, action: PayloadAction<Activity>) {
-      if (
-        state.activityRegistry.findIndex((a) => a.id == action.payload.id) == -1
-      )
-        state.activityRegistry.push(action.payload);
+    setActivity(state: ActivityReduxSoreType, action: PayloadAction<UserActivity>) {
+
+      const {user, activity} = action.payload;
+      if(user){
+        activity.isGoing = activity.attendees!.some(
+          (a) => a.username === user.username
+        );
+        activity.isHost = activity.hostUsername === user.username;
+        activity.host = activity.attendees?.find(
+          (x) => x.username === activity.hostUsername
+        );
+      }
+      activity.date = new Date(activity.date!);
+
+      //new activity
+      if (state.activityRegistry.findIndex((a) => a.id === activity.id) === -1){
+        state.activityRegistry.push(activity);
+      }
+      else{
+        //update existing
+        const activityIndexToUpdate = state.activityRegistry.findIndex((a) => a.id === activity.id); 
+        state.activityRegistry[activityIndexToUpdate] = activity;
+      }
     },
-    setLoadingInitial(state, action: PayloadAction<boolean>) {
+    setLoadingInitial(
+      state: ActivityReduxSoreType,
+      action: PayloadAction<boolean>
+    ) {
       state.loadingInitial = action.payload;
     },
-    setPagination(state, action: PayloadAction<Pagination | null>) {
+    setPagination(
+      state: ActivityReduxSoreType,
+      action: PayloadAction<Pagination | null>
+    ) {
       state.pagination = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(
       getDashboardActivity.fulfilled,
-      (state, action: PayloadAction<PageResult<Activity[]>>) => {
+      (
+        state: ActivityReduxSoreType,
+        action: PayloadAction<PageResult<Activity[]>>
+      ) => {
         console.log(action.payload);
         state.pagination = action.payload.pagination;
-        state.activityRegistry = action.payload.data;
+        action.payload.data.forEach(activity => { state.activityRegistry.push(activity)});
       }
     );
   },
@@ -114,9 +144,8 @@ export const getDashboardActivity = createAsyncThunk(
 
     //build page parameters from current store state
     const state: ReduxRootState = getState();
-    const {user} = state.userReducer;
     const searchParams = new URLSearchParams();
-    const { pageParams, predicate } = state.activityReducer;
+    const { pageParams, predicate } = state.activityReducer as ActivityReduxSoreType;
     searchParams.append("pageNumber", pageParams.pageNumber.toString());
     searchParams.append("pageSize", pageParams.pageSize.toString());
 
@@ -146,11 +175,12 @@ export const getDashboardActivity = createAsyncThunk(
 
     //build activities
     result.data.forEach((activity) => {
-      if (state.userReducer.user) {
+      if (state.userReducer.user as User) {
         activity.isGoing = activity.attendees!.some(
-          (a) => a.username === user.username
+          (a) => a.username === state.userReducer.user.username
         );
-        activity.isHost = activity.hostUsername === user.username;
+        activity.isHost =
+          activity.hostUsername === state.userReducer.user.username;
         activity.host = activity.attendees?.find(
           (x) => x.username === activity.hostUsername
         );
@@ -162,46 +192,3 @@ export const getDashboardActivity = createAsyncThunk(
     return result;
   }
 );
-
-//NOT WORKING SOLUTION
-export const loadDashboardActivities = (
-  user: User /*, searchParams: URLSearchParams*/
-) => {
-  console.log("inside loadDashboardActivities");
-
-  return async (dispatch: ReduxDispatch) => {
-    console.log("inside loadDashboardActivities inner function");
-    dispatch(activitySlice.actions.setLoadingInitial(true));
-
-    const sendActivitiesRequest = async () => {
-      const searchParams = new URLSearchParams();
-      searchParams.append("pageNumber", "1");
-      searchParams.append("pageSize", "1");
-      const result = await agent.Activities.list(searchParams);
-
-      console.log(result);
-      result.data.forEach((activity) => {
-        if (user) {
-          activity.isGoing = activity.attendees!.some(
-            (a) => a.username === user.username
-          );
-          activity.isHost = activity.hostUsername === user.username;
-          activity.host = activity.attendees?.find(
-            (x) => x.username === activity.hostUsername
-          );
-        }
-        activity.date = new Date(activity.date!);
-        dispatch(activitySlice.actions.setActivity(activity));
-      });
-      dispatch(activitySlice.actions.setPagination(result.pagination));
-      dispatch(activitySlice.actions.setLoadingInitial(false));
-    };
-
-    try {
-      await sendActivitiesRequest();
-    } catch (error) {
-      console.log(error);
-      dispatch(activitySlice.actions.setLoadingInitial(false));
-    }
-  };
-};
