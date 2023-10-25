@@ -21,9 +21,14 @@ export const commonSlice = createSlice({
       console.log("Setting new token in Store");
       console.log(action.payload);
       state.token = action.payload;
+      if (action.payload) 
+        localStorage.setItem("jwt", action.payload);
+      else
+        localStorage.removeItem("jwt");
     },
     logout: (state) => {
       state.token = null;
+      localStorage.removeItem("jwt");
     },
     setAppLoaded:(state)=>{
       state.appLoaded = true;

@@ -84,6 +84,8 @@ export const activitySlice = createSlice({
           state.predicate[startDateIndex].action = action.payload.value;
           break;
       }
+      state.activityRegistry = [];
+      state.pageParams.pageNumber = 1;
     },
     setActivity(state: ActivityReduxSoreType, action: PayloadAction<UserActivity>) {
 
@@ -131,7 +133,10 @@ export const activitySlice = createSlice({
       ) => {
         console.log(action.payload);
         state.pagination = action.payload.pagination;
-        action.payload.data.forEach(activity => { state.activityRegistry.push(activity)});
+        action.payload.data.forEach(activity => {
+          if (state.activityRegistry.findIndex(a=>a.id === activity.id) === -1)
+            state.activityRegistry.push(activity);
+          });
       }
     );
   },
@@ -149,22 +154,14 @@ export const getDashboardActivity = createAsyncThunk(
     searchParams.append("pageNumber", pageParams.pageNumber.toString());
     searchParams.append("pageSize", pageParams.pageSize.toString());
 
-    //set predicate array
-    predicate.forEach(
-      (loopPredicate: { key: string; action: boolean | Date }) => {
-        if (loopPredicate.key === "startDate") {
-          searchParams.append(
-            loopPredicate.key,
-            (loopPredicate.action as Date).toISOString()
-          );
-        } else {
-          searchParams.append(
-            loopPredicate.key,
-            loopPredicate.action.toString()
-          );
-        }
+    predicate.forEach((value) => {
+      if (value.key === "startDate") {
+        searchParams.append(value.key, (value.action as Date).toISOString());
+      } else {
+        searchParams.append(value.key, value.action.toString());
       }
-    );
+    });
+
     await dispatch(activitySlice.actions.setLoadingInitial(true));
     //get activities
     const result: PageResult<Activity[]> = await agent.Activities.listPage(

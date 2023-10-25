@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     if (commonState.token) {
-      //NOTE: dispatch passes getUser(), not userSlice.actions.getUser()
+      //NOTE: dispatch passes getUser() which is api call to get user, not userSlice.actions.getUser()
       //because createAsyncThunk is used for getUser
       dispatch(getUser()).finally(() => dispatch(commonSlice.actions.setAppLoaded()));
     } else {
