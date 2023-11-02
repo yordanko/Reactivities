@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace Domain
 {
+    //Note: Manualy create many to many (activity to user) class
+    //traditionaly can be done by using convention it adds ICollection<Activity> on AppUser class and also
+    //ICollection<AppUser> Users in Activity class
     public class ActivityAttendee
     {
         public string AppUserId { get; set; }

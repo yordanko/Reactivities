@@ -23,6 +23,7 @@ namespace API.Services
                 new Claim(ClaimTypes.Email, user.Email),
             };
 
+            //Note: install Nuget package System.IdentityModel.Tokens.Jwt
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["TokenKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
@@ -30,7 +31,7 @@ namespace API.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 //NOTE: JWT expiry day/time is set here. 
-                Expires = DateTime.UtcNow.AddMinutes(1),
+                Expires = DateTime.UtcNow.AddMinutes(60),
                 SigningCredentials = creds
             };
 

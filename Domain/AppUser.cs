@@ -4,6 +4,7 @@ namespace Domain
 {
     public class AppUser : IdentityUser
     {
+        //Note: public ICollection<ActivityAttendee>. It is one to many ActivityAttendee
         public string DisplayName { get; set; }
         public string Bio { get; set; }
         public ICollection<ActivityAttendee> Activities { get; set; }

@@ -92,7 +92,10 @@ namespace API.Controllers
         {
             if (await _userManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
+                //Note: Add error to Model State instead of returning Unauthorized as with login
                 ModelState.AddModelError("username", "Username taken");
+
+                //Note: Use ValidationProblem object to return array of errors
                 return ValidationProblem();
             }
 

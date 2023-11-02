@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Persistence
 {
+    //Note: DataContext inherits form IdentityDbContext, not DbContext!
+    //By using IdentityDbContext do not need to add DbSet<User>. But still need to run "dotnet ef migrations add ..." command to see new identity tables
     public class DataContext : IdentityDbContext<AppUser>
     {
         public DataContext(DbContextOptions options) : base(options)
@@ -16,11 +18,13 @@ namespace Persistence
         public DbSet<Comment> Comments { get; set; }
         public DbSet<UserFollowing> UserFollowings { get; set; }
 
-
+        //Note: Use OnModelCreating to additionaly configure data context
+        //Describe relationship in tables
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            //Combine keys to new key
             builder.Entity<ActivityAttendee>(x => x.HasKey(aa => new { aa.AppUserId, aa.ActivityId }));
 
             builder.Entity<ActivityAttendee>()

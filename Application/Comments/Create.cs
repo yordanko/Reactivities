@@ -49,6 +49,7 @@ namespace Application.Comments
 
                 if (activity == null) return null;
 
+                //Note: Get current user by using HttpContext!
                 var user = await _context.Users
                     .SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 

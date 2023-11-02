@@ -17,6 +17,8 @@ export const routes: RouteObject[] = [
             {element: <RequireAuth />, children: [
                 {path: 'activities', element: <ActivityDashboard />},
                 {path: 'activities/:id', element: <ActivityDetails />},
+                //Note: key atributes! Although it is the same component they have different key 
+                //to distinguish between both. One for create new, the other for edit
                 {path: 'createActivity', element: <ActivityForm key='create' />},
                 {path: 'manage/:id', element: <ActivityForm key='manage' />},
                 {path: 'profiles/:username', element: <ProfilePage />},

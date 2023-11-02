@@ -36,9 +36,13 @@ namespace Application.Activities
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                //Note: Get current user by using HttpContext.User!
                 var user = await _context.Users.FirstOrDefaultAsync(x => 
                     x.UserName == _userAccessor.GetUsername());
 
+                //Note: Create ActivityAttendee entry and add it before adding Activity 
+                //It is done because we have one activity to many ActivityAttendies relations 
+                //ActivityAttendies table handle many to many relationships between activity and user
                 var attendee = new ActivityAttendee
                 {
                     AppUser = user,
