@@ -87,6 +87,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.MapControllers();
+//add SingleR hub
 app.MapHub<ChatHub>("/chat");
 
 //if it finds unrecognized root, pass it back to FallbackController which pass to client application 

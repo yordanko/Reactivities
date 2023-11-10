@@ -6,6 +6,7 @@ import { store } from "./store";
 //to install signalR on the client use command: npm install @microsoft/signalr
 export default class CommentStore {
     comments: ChatComment[] = [];
+    //HubConnection is installed with package @microsoft/signalr
     hubConnection: HubConnection | null = null; 
 
     constructor() {

@@ -30,6 +30,7 @@ namespace Infrastructure.Security
                 .SingleOrDefault(x => x.Key == "id").Value?.ToString());
 
             var attendee = _dbContext.ActivityAttendees
+                //Note: Instruct EF not to track attendee! This is done so only the host of activity can edit it.
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.AppUserId == userId && x.ActivityId == activityId)
                 .Result;

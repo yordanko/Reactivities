@@ -5,6 +5,7 @@ namespace API.Controllers
 {
     public class PhotosController : BaseApiController
     {
+        //Note: FromForm attribute shows were to find command parameter 
         public async Task<IActionResult> Add([FromForm] Add.Command command)
         {
             return HandleResult(await Mediator.Send(command));

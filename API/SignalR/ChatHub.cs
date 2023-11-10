@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR
 {
-    //Custom class inherited from Hub 
+    //Custom class inherited from Hub.No need to install Nuget package 
     public class ChatHub : Hub
     {
         //It is optional but this implementation uses MediatR, so needs to inject it
@@ -15,6 +15,7 @@ namespace API.SignalR
             _mediator = mediator;
         }
 
+        //Client will be able to invoke methods with the hub, So client will be able to call any public method in the Hub
         public async Task SendComment(Create.Command command)
         {
             var comment = await _mediator.Send(command);

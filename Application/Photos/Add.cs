@@ -12,6 +12,8 @@ namespace Application.Photos
     {
         public class Command : IRequest<Result<Photo>>
         {
+            
+            //Note: The name of command is File. This should be the name of the key under form-data format of request body when postman is used.
             public IFormFile File { get; set; }
         }
 

@@ -46,12 +46,12 @@ namespace API.Extensions
 
                     };
 
-                    //SingnalR registration: Add access token to SingleR context
+                    //SingnalR registration and authentication: Add access token to SingleR context from query string
                     opt.Events = new JwtBearerEvents
                     {
                         OnMessageReceived = context =>
                         {
-                            //access_token will be passed from clien
+                            //access_token will be passed from client
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
                             if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))

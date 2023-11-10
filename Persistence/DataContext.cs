@@ -40,6 +40,7 @@ namespace Persistence
             builder.Entity<Comment>()
                 .HasOne(a => a.Activity)
                 .WithMany(c => c.Comments)
+                //Note: deleting an activity with comments will delete also comments
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<UserFollowing>(b =>
@@ -48,7 +49,7 @@ namespace Persistence
 
                 b.HasOne(o => o.Observer)
                     .WithMany(f => f.Followings)
-                    .HasForeignKey(o => o.ObserverId)
+                    .HasForeignKey(o => o.ObserverId)                    
                     .OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(t => t.Target)
                     .WithMany(f => f.Followers)

@@ -9,7 +9,8 @@ namespace Application.Core
     {
         public MappingProfiles()
         {
-            string currentUsername = null;
+            //Note: this should be currently logged user. It is passed as parameters (second argument) in each call to ProjectTo method 
+            string currentUsername = null; 
             CreateMap<Activity, Activity>();
             CreateMap<Activity, ActivityDto>()
                 .ForMember(d => d.HostUsername, o => o.MapFrom(s => s.Attendees
