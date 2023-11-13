@@ -16,7 +16,10 @@ namespace API.Extensions
             };
             response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationHeader));
 
-            //ApplicationServicesExtensions CORS policy .WithExposedHeaders("WWW-Authenticate", "Pagination") overrides next line and there is no need
+            //By adding to CORS policies next line we do not need to expose "Pagination" headers.
+            //("WWW-Authenticate", "Pagination") overrides next line and there is no need
+
+            //Note: Expose custom "Pagination" headers otherwise CORS will not let browser about it
             //response.Headers.Add("Access-Control-Expose-Headers", "Pagination");
         }
     }
