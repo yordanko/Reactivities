@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: yordanko/reactivities:latest
+          tags: yordy/reactivities:latest
   # deploy:
   #   needs: docker
   #   name: Deploy app
