@@ -15,7 +15,7 @@ export default observer(function ProfilePhotos({ profile }: Props) {
     const [addPhotoMode, setAddPhotoMode] = useState(false);
     const [target, setTarget] = useState('');
 
-    function handlePhotoUpload(file: any) {
+    function handlePhotoUpload(file: Blob) {
         uploadPhoto(file).then(() => setAddPhotoMode(false));
     }
 

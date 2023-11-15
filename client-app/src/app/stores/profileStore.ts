@@ -31,7 +31,7 @@ export default class ProfileStore {
         )
     }
 
-    setActiveTab = (activeTab: any) => {
+    setActiveTab = (activeTab: number) => {
         this.activeTab = activeTab;
     }
 
@@ -58,7 +58,7 @@ export default class ProfileStore {
         }
     }
 
-    uploadPhoto = async (file: any) => {
+    uploadPhoto = async (file: Blob) => {
         this.uploading = true;
         try {
             const response = await agent.Profiles.uploadPhoto(file);

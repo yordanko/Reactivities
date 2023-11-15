@@ -20,6 +20,8 @@ export default observer(function ActivityDashboard() {
     }
 
     useEffect(() => {
+        //Note: When React 18 is in strict mode, then loadActivities will be call twice in development mode
+        //This is by design
         loadActivities();
     }, [loadActivities])
 

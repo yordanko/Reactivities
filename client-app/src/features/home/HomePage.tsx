@@ -1,11 +1,10 @@
 import { observer } from 'mobx-react-lite';
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Header, Segment, Image, Divider } from "semantic-ui-react";
 import { useStore } from '../../app/stores/store';
 import LoginForm from '../users/LoginForm';
 import RegsiterForm from '../users/RegsiterForm';
-import FacebookLogin from '@greatsumini/react-facebook-login';
+import FacebookLogin, { FailResponse, SuccessResponse } from '@greatsumini/react-facebook-login';
 
 export default observer(function HomePage() {
     const { userStore, modalStore } = useStore();
@@ -58,13 +57,12 @@ export default observer(function HomePage() {
                 inverted
                 color="facebook"
                 content="Login with Facebook"
-                loading = {userStore.fbLogin}
-                onSuccess={(response: any) => {
+                loading={userStore.fbLogin}
+                onSuccess={(response: SuccessResponse) => {
                   console.log("Login succes", response);
-                  userStore.facebookLogin(response.accessToken)
+                  userStore.facebookLogin(response.accessToken);
                 }}
-
-                onFail={(response: any) => {
+                onFail={(response: FailResponse) => {
                   console.log("Login failed", response);
                 }}
               />

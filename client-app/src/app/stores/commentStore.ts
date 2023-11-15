@@ -17,10 +17,10 @@ export default class CommentStore {
         if (store.activityStore.selectedActivity) {
           this.hubConnection = new HubConnectionBuilder()
             .withUrl(
-              process.env.REACT_APP_CHAT_URL + "?activityId=" + activityId,
+              import.meta.env.VITE_CHAT_URL + "?activityId=" + activityId,
               {
                 //pass token
-                accessTokenFactory: () => store.userStore.user?.token!,
+                accessTokenFactory: () => store.userStore.user?.token as string,
               }
             )
             .withAutomaticReconnect()
@@ -62,7 +62,7 @@ export default class CommentStore {
         this.stopHubConnection();
     }
 
-    addComment = async (values: any) => {
+    addComment = async (values: {body:string, activityId?:string}) => {
         values.activityId = store.activityStore.selectedActivity?.id;
         try {
             //'SendComment' muches Class ChatHub added method!

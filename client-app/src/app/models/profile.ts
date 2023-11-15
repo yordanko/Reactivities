@@ -1,6 +1,6 @@
 import { User } from "./user";
 
-export interface Profile {
+export interface IProfile {
     username: string;
     displayName: string;
     image?: string;
@@ -11,12 +11,20 @@ export interface Profile {
     photos?: Photo[]
 }
 
-export class Profile implements Profile {
-    constructor(user: User) {
-        this.username = user.username;
-        this.displayName = user.displayName;
-        this.image = user.image
-    }
+export class Profile implements IProfile {
+  constructor(user: User) {
+    this.username = user.username;
+    this.displayName = user.displayName;
+    this.image = user.image;
+  }
+  username: string;
+  displayName: string;
+  image?: string;
+  bio?: string;
+  followersCount: number =0;
+  followingCount: number = 0;
+  following = false;
+  photos?: Photo[];
 }
 
 export interface Photo {

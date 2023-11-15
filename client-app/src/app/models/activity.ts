@@ -1,6 +1,6 @@
 import { Profile } from "./profile";
 
-export interface Activity {
+export interface IActivity {
     id: string;
     title: string;
     description: string;
@@ -26,7 +26,7 @@ export class ActivityFormValues
     city: string = '';
     venue: string = '';
 
-	  constructor(activity?: ActivityFormValues) {
+    constructor(activity?: ActivityFormValues) {
       if (activity) {
         this.id = activity.id;
         this.title = activity.title;
@@ -40,8 +40,28 @@ export class ActivityFormValues
 
   }
 
-  export class Activity implements Activity {
-    constructor(init?: ActivityFormValues) {
+  export class Activity implements IActivity {
+    constructor(init: ActivityFormValues) {
       Object.assign(this, init);
+      this.id = init.id!
+      this.title = init.title
+      this.description = init.description
+      this.category = init.category
+      this.date = init.date
+      this.city = init.city
+      this.venue = init.venue
     }
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    date: Date | null;
+    city: string;
+    venue: string;
+    hostUsername?: string;
+    isCancelled?: boolean;
+    isGoing?: boolean;
+    isHost?: boolean;
+    attendees: Profile[] = [];
+    host?: Profile;
   }
