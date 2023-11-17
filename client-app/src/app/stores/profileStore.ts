@@ -11,7 +11,7 @@ export default class ProfileStore {
     loading = false;
     followings: Profile[] = [];
     loadingFollowings = false;
-    activeTab: number = 0;
+    activeTab: number | string = 0;
     userActivities: UserActivity[] = [];
     loadingActivities = false;
 
@@ -31,7 +31,7 @@ export default class ProfileStore {
         )
     }
 
-    setActiveTab = (activeTab: number) => {
+    setActiveTab = (activeTab: number | string) => {
         this.activeTab = activeTab;
     }
 

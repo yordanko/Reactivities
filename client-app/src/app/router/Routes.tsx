@@ -14,6 +14,7 @@ export const routes: RouteObject[] = [
         path: '/',
         element: <App />,
         children: [
+            //Note: to add url inside element user have to be authorized
             {element: <RequireAuth />, children: [
                 {path: 'activities', element: <ActivityDashboard />},
                 {path: 'activities/:id', element: <ActivityDetails />},

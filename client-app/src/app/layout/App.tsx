@@ -25,6 +25,7 @@ function App() {
 
   return (
     <>
+      //scroll to top of the page when look at activity 
       <ScrollRestoration />
       <ModalContainer />
       <ToastContainer position='bottom-right' hideProgressBar theme='colored' />
