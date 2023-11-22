@@ -81,16 +81,17 @@ app.UseCors("CorsPolicy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-//look for wwwroot folder and search for index.html and serve from kestrel server
+//Note: This tells kestrel server to look for wwwroot folder and search for index.html and serve from kestrel server
 app.UseDefaultFiles();
-//serve static files from wwwroot folder
+//Note: This tells kestrel server to serve static files from wwwroot folder
 app.UseStaticFiles();
 
 app.MapControllers();
 //add SingleR hub
 app.MapHub<ChatHub>("/chat");
 
-//if it finds unrecognized root, pass it back to FallbackController which pass to client application 
+//Note: This need to register our fallback controller. 
+//When the api finds unrecognized url root, then pass it back to FallbackController which pass to client application 
 app.MapFallbackToController("Index", "Fallback");
 
 using var scope = app.Services.CreateScope();
