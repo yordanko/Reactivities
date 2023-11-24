@@ -20,6 +20,11 @@ namespace API.Extensions
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
+            // NOTE: Configured in Development will use Sql lite. In production will use postgress. 
+            // When change database genarate migration again: 1. Delete Migrations, 2. Delete Database, 3. Install proper nuget package for Object Ralated Mapper to EF 
+            // and configure in this file (uncommented lines below). For example Sql lite NuGet package is: Microsoft.EntityFrameworkCore.Sqlite  
+            // 4. Generate new migration (Command is: dotnet ef migrations add {NAME_OF_MIGRATION} -p Persistence -s API)             
             services.AddDbContext<DataContext>(options =>
             {
                 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -32,36 +37,40 @@ namespace API.Extensions
                 if (env == "Development")
                 {
                     // Use connection string from file.
-                    connStr = config.GetConnectionString("PostGresConnection");
+                    connStr = config.GetConnectionString("SqlLite");
+                    options.UseSqlite(connStr);
                 }
                 else
                 {
+                    // This is Production environment set to use Postgres database
+                    // Note: Loook at fly.toml file for [env] environment viriables, when deploy to fly.io!
+
                     // Use connection string provided at runtime by Flyio.
+                    // DATABASE_URL is a secret in FLY.IO environment created when postgres db image was created during proccess of deployment
                     var connUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
+                    if (connUrl != null)
+                    {
+                        // Parse connection URL to connection string for Npgsql
+                        connUrl = connUrl.Replace("postgres://", string.Empty);
+                        var pgUserPass = connUrl.Split("@")[0];
+                        var pgHostPortDb = connUrl.Split("@")[1];
+                        var pgHostPort = pgHostPortDb.Split("/")[0];
+                        var pgDb = pgHostPortDb.Split("/")[1];
+                        var pgUser = pgUserPass.Split(":")[0];
+                        var pgPass = pgUserPass.Split(":")[1];
+                        var pgHost = pgHostPort.Split(":")[0];
+                        var pgPort = pgHostPort.Split(":")[1];
 
-                    // Parse connection URL to connection string for Npgsql
-                    connUrl = connUrl.Replace("postgres://", string.Empty);
-                    var pgUserPass = connUrl.Split("@")[0];
-                    var pgHostPortDb = connUrl.Split("@")[1];
-                    var pgHostPort = pgHostPortDb.Split("/")[0];
-                    var pgDb = pgHostPortDb.Split("/")[1];
-                    var pgUser = pgUserPass.Split(":")[0];
-                    var pgPass = pgUserPass.Split(":")[1];
-                    var pgHost = pgHostPort.Split(":")[0];
-                    var pgPort = pgHostPort.Split(":")[1];
-
-                    connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
-                }
-
-                // Whether the connection string came from the local development configuration file
-                // or from the environment variable from FlyIO, use it to set up your DbContext.
-                 options.UseNpgsql(connStr);
-
-                // NOTE: Comment out below for Sql lite. 
-                // When change database genarate migration: 1. Delete Migrations, 2. Delete Database, 3. Install proper nuget package for Object Ralated Mapper to EF 
-                // and configure in this file (uncommented lines below). For example Sql lite NuGet package is: Microsoft.EntityFrameworkCore.Sqlite  4. Generate new migration (Command is: dotnet ef migrations add {NAME_OF_MIGRATION} -p Persistence -s API) 
-                //connStr = config.GetConnectionString("SqlLite");
-                //options.UseSqlite(connStr);
+                        connStr = $"Server={pgHost};Port={pgPort};User Id={pgUser};Password={pgPass};Database={pgDb};";
+                    }
+                    else
+                    {
+                        connStr = config.GetConnectionString("PostGresInsideDockerConnection");
+                    }
+                    // Whether the connection string came from the local development configuration file
+                    // or from the environment variable from FlyIO, use it to set up your DbContext.
+                    options.UseNpgsql(connStr);
+                }            
             });
             services.AddCors(opt =>
             {

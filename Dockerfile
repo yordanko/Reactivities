@@ -25,3 +25,9 @@ WORKDIR /app
 # copy everything from build-env folder /app/out to folder /app. Period . means everything needs to be copied
 COPY --from=build-env /app/out .
 ENTRYPOINT [ "dotnet", "API.dll" ]
+
+# NOTE: Command used with docker assuming reactivity-deploy is image we want to create
+# To download image and run container of Postgres db: docker run --name my-postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=secret -p 5432:5432 -d postgres:latest
+# To build docker image and run it in container: docker build -t yordy/reactivities-deploy .   NOTE: dot is needed on the end
+# To run inside container from an image:  docker run --rm -it -p 8080:80 yordy/reactivities-deploy:latest
+# To push to DockerHub: docker push yordy/reactivities-deploy:latest 

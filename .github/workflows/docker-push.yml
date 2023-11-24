@@ -1,8 +1,13 @@
+# This file must be in folder ".github/workflows" under root of the project will CI/CD 
+# It is based on https://github.com/docker/build-push-action ,  to create multiplatform build in docker hub
+# secrets FLY_API_TOKEN, DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, must be added to Reactivities Github repository / Settings tab / Secrets and valiables / Actions
+# After deploy to GitHub this will be executed automaticaly run under Action or manually (when workflow_dispatch option in file) 
+
 name: docker-push
-#To make GitHub integration run this file it has to be in .github\workflows folder
+# To make GitHub integration manual use workflow_dispatch section as below
 on:
   workflow_dispatch:
-  # To run yml when push to main remove line above and comment out lines below:
+  # To run yml when push to main branch occur remove line above and comment out lines below:
   # push:
   #   branches:
   #     - 'main'
@@ -27,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: yordy/reactivities:latest
+          tags: yordy/reactivities-deploy:latest
   # deploy:
   #   needs: docker
   #   name: Deploy app
