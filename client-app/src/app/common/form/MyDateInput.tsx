@@ -2,6 +2,7 @@ import {useField} from "formik";
 import {Form, Label} from "semantic-ui-react";
 import DatePicker, {ReactDatePickerProps} from 'react-datepicker';
 
+//Note:  Partial<T>. It makes all properties of T being optional
 export default function MyDateInput(props: Partial<ReactDatePickerProps>) {
     const [field, meta, helpers] = useField(props.name!);
     return (
