@@ -15,3 +15,6 @@ If you are looking for the repository for the version of this app created on .Ne
 https://github.com/TryCatchLearn/Reactivities-v6
 
 See secrets to be used.docxto use proper config.
+
+-npm version 9.5.0
+-react version 18.2.0
